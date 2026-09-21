@@ -1,0 +1,25 @@
+# Simulation output
+*.vvp
+*.vcd
+*.fst
+*.lxt
+*.lx2
+
+# LaTeX build files (if you keep the .tex report)
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Word temporary files
+~$*
+
+# Editor and OS files
+.vscode/
+.DS_Store
+Thumbs.db
