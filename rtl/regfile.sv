@@ -1,5 +1,6 @@
 module regfile(
     input  logic        clk,
+    input  logic        reset,
     input  logic        we,
 
     input  logic [4:0]  rs1,
@@ -13,17 +14,26 @@ module regfile(
 );
 
 logic [31:0] registers [0:31];
+integer i;
 
-// Read Port 1
-assign rd1 = (rs1 == 0) ? 32'd0 : registers[rs1];
+// Read Port 1 with internal write-through forwarding
+assign rd1 = (rs1 == 5'd0) ? 32'd0 :
+             (we && (rd == rs1)) ? wd : registers[rs1];
 
-// Read Port 2
-assign rd2 = (rs2 == 0) ? 32'd0 : registers[rs2];
+// Read Port 2 with internal write-through forwarding
+assign rd2 = (rs2 == 5'd0) ? 32'd0 :
+             (we && (rd == rs2)) ? wd : registers[rs2];
 
-// Write Port
-always_ff @(posedge clk) begin
-    if (we && rd != 0)
+// Synchronous Write Port with reset initialization
+always_ff @(posedge clk or posedge reset) begin
+    if (reset) begin
+        for (i = 0; i < 32; i = i + 1) begin
+            registers[i] <= 32'd0;
+        end
+    end
+    else if (we && (rd != 5'd0)) begin
         registers[rd] <= wd;
+    end
 end
 
 endmodule
